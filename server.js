@@ -28,7 +28,8 @@ const upload = multer({ storage: storage })
 
  
   var corsOptions = {
-      origin:"http://localhost:5173",
+      // origin:"http://localhost:5173",
+      origin:"https://inkgarden.info",
       methods: "GET,POST,DELETE,PUT,PATCH,HEAD",
       credentials: true
       // optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
