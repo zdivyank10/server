@@ -27,35 +27,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 
-// var corsOptions = {
-//     // origin:"http://localhost:5173",
-//     origin:'https://inkgarden.info/',
-//     methods: "GET,POST,DELETE,PUT,PATCH,HEAD",
-//     credentials: true
-//     // optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   }
-
 const corsOptions = {
   // origin:"http://localhost:5173",
   origin: ["http://localhost:5173","https://inkgarden.info"],
   methods: "GET,POST,DELETE,PUT,PATCH,HEAD",
-  credentials: true // Enable credentials if your frontend sends cookies or other credentials
+  credentials: true 
 };
 
 app.use(cors(corsOptions));
 
-// const allowedOrigins = ['https://6b66-2402-a00-172-b05b-a922-e714-b569-6c7d.ngrok-free.app'];
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   }
-// };
-
-// app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use("/api/auth", authRouter);
@@ -84,6 +64,14 @@ app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next)
 });
 
 
+app.get('/', async (req, res) => {
+  try {
+   
+    res.json('Hello Server');
+  } catch (error) {
+    console.error('Error fetching blog:', error);
+  }
+});
 app.get('/api/blog/:blogid', async (req, res) => {
   try {
     const blogid = req.params.blogid;
