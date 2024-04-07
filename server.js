@@ -28,8 +28,8 @@ const upload = multer({ storage: storage })
 
 
 const corsOptions = {
-  // origin:"http://localhost:5173",
-  origin: ["http://localhost:5173","https://inkgarden.info"],
+  // origin:'https://inkgarden.info/',
+  origin: ["http://localhost:5173/","https://inkgarden.info/"],
   methods: "GET,POST,DELETE,PUT,PATCH,HEAD",
   credentials: true 
 };
