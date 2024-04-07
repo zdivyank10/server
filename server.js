@@ -25,6 +25,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 const corsOptions = {
+  // origin: "http://localhost:5173",
   origin: ["http://localhost:5173", "https://inkgarden.info"],
   methods: "GET, POST, DELETE, PUT, PATCH, HEAD",
   credentials: true
@@ -67,7 +68,7 @@ app.get('/api/blog/:blogid', async (req, res) => {
 app.use(errorMiddleware);
 
 app.listen(8000, () => {
-  console.log(`server running on port 8000`);
+  console.log(`server running on port 8000 👍`);
 });
 
 
