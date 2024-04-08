@@ -33,7 +33,7 @@ const corsOptions = {
 
 connectDb();
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/form", contactRouter);
@@ -41,18 +41,20 @@ app.use("/api/blog", blogRouter);
 app.use("/api/admin", adminRouter);
 app.use('/api/like', likeRoutes);
 app.use('/api/comment', commentRoutes);
+
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.post('/api/blog/upload', upload.single('file'), function (req, res, next) {
-  res.json(req.file.filename);
+  return res.json(req.file.filename);
 })
 app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next) {
-  res.json(req.file.filename);
+  return res.json(req.file.filename);
 });
 
 app.get('/', async (req, res) => {
   try {
-    res.json('Hello Server');
+    return res.json('Hello Server');
   } catch (error) {
     console.error('Error fetching blog:', error);
   }
@@ -61,10 +63,10 @@ app.get('/api/blog/:blogid', async (req, res) => {
   try {
     const blogid = req.params.blogid;
     const eachblog = await blog.findOne({ _id: blogid });
-    res.json({ eachblog });
+    return  res.json({ eachblog });
   } catch (error) {
     console.error('Error fetching blog:', error);
-    res.status(500).json({ message: 'Failed to fetch blog' });
+    return res.status(500).json({ message: 'Failed to fetch blog' });
   }
 });
 app.use(errorMiddleware);
