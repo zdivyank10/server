@@ -30,10 +30,10 @@ const blogform = async (req, res) => {
         // console.log("req of img",req.file.filename)
         // console.log("path of img",cover_img_path)
         console.log('Blog posted successfully:', newBlog);
-        res.status(200).json({ message: 'Blog posted successfully', blog: newBlog });
+        return res.status(200).json({ message: 'Blog posted successfully', blog: newBlog });
     } catch (error) {
         console.error('Error creating blog post:', error);
-        res.status(500).json({ message: 'Failed to create blog post' });
+        return  res.status(500).json({ message: 'Failed to create blog post' });
     }
 }
 
@@ -45,10 +45,10 @@ const approvedBlogs = async (req, res) => {
         const approvedBlog = await blog.find({ permission: true })
             .populate('author_id', 'username');
 
-        res.json(approvedBlog);
+            return res.json(approvedBlog);
     } catch (error) {
         console.error('Error getting blog permission:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 const notApprovedBlogs = async (req, res) => {
@@ -58,10 +58,10 @@ const notApprovedBlogs = async (req, res) => {
         const notapprovedBlog = await blog.find({ permission: false })
             .populate('author_id', 'username');
 
-        res.json(notapprovedBlog);
+            return  res.json(notapprovedBlog);
     } catch (error) {
         console.error('Error getting blog permission:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return  res.status(500).json({ error: 'Internal server error' });
     }
 };
 const pendingBlogs = async (req, res) => {
@@ -71,10 +71,10 @@ const pendingBlogs = async (req, res) => {
         const pendingBlog = await blog.find({ permission: "pending" })
             .populate('author_id', 'username');
 
-        res.json(pendingBlog);
+            return  res.json(pendingBlog);
     } catch (error) {
         console.error('Error getting blog permission:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -89,11 +89,11 @@ const getfullblog = async (req, res) => {
             console.log('Blog post not found for id:', id);
             return res.status(404).json({ message: 'Blog post not found' });
         }
-        res.json(blogPost);
+        return res.json(blogPost);
         console.log('eachblog', blogPost);
     } catch (error) {
         console.error('Error fetching full blog post:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
 //userbyid
@@ -106,7 +106,7 @@ const getblogbyuserid = async (req, res) => {
         const blogPostbyuid = await blog.find({ author_id: id }).populate('author_id', 'username');;
         console.log('Full Blog Post By id:', blogPostbyuid);
 
-        res.json(blogPostbyuid);
+        return res.json(blogPostbyuid);
 
     } catch (error) {
         console.log('Error getting blog by id', error);
@@ -121,7 +121,7 @@ const myapprovedblogs = async (req, res) => {
         const blogPostbyuid = await blog.find({ author_id: id, permission: true }).populate('author_id', 'username');;
         console.log('Full approved Blog Post By id:', blogPostbyuid);
 
-        res.json(blogPostbyuid);
+        return  res.json(blogPostbyuid);
 
     } catch (error) {
         console.log('Error getting blog by id', error);
@@ -136,7 +136,7 @@ const mynotapprovedblogs = async (req, res) => {
         const blogPostbyuid = await blog.find({ author_id: id, permission: false }).populate('author_id', 'username');;
         console.log('Full approved Blog Post By id:', blogPostbyuid);
 
-        res.json(blogPostbyuid);
+        return res.json(blogPostbyuid);
 
     } catch (error) {
         console.log('Error getting blog by id', error);
@@ -151,7 +151,7 @@ const mypendingblogs = async (req, res) => {
         const blogPostbyuid = await blog.find({ author_id: id, permission: 'pending' }).populate('author_id', 'username');
         console.log('Full approved Blog Post By id:', blogPostbyuid);
 
-        res.json(blogPostbyuid);
+        return res.json(blogPostbyuid);
 
     } catch (error) {
         console.log('Error getting blog by id', error);
@@ -169,11 +169,11 @@ const updateBlog = async (req, res) => {
             return res.status(404).json({ error: 'Blog not found' });
         }
 
-        res.status(200).json({ message: 'Blog updated successfully', updatedBlog });
+        return res.status(200).json({ message: 'Blog updated successfully', updatedBlog });
 
     } catch (error) {
         console.error('Error updating password:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return  res.status(500).json({ error: 'Internal server error' });
     }
 };
 const deleteBlog = async (req, res) => {
@@ -186,11 +186,11 @@ const deleteBlog = async (req, res) => {
             return res.status(404).json({ error: 'Blog not found' });
         }
 
-        res.status(200).json({ message: 'Blog Deleted successfully', deleteBlog });
+        return res.status(200).json({ message: 'Blog Deleted successfully', deleteBlog });
 
     } catch (error) {
         console.error('Error Deleting Post:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -211,10 +211,10 @@ const searchBlog = async (req, res) => {
             ]
         }).populate('author_id', 'username');
 
-        res.json(searchResults);
+        return res.json(searchResults);
     } catch (error) {
         console.log('Error getting searched blogs', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

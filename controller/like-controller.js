@@ -12,16 +12,16 @@ const like = async (req, res) => {
     if (existingLike) {
       // User already liked the blog, so unlike it
       await Like.deleteOne({ _id: existingLike._id });
-      res.json({ success: true, message: 'Blog unliked successfully' });
+      return res.json({ success: true, message: 'Blog unliked successfully' });
     } else {
       // User hasn't liked the blog, so like it
       const newLike = new Like({ user, blog });
       await newLike.save();
-      res.json({ success: true, message: 'Blog liked successfully' });
+      return res.json({ success: true, message: 'Blog liked successfully' });
     }
   } catch (error) {
     console.error('Error doing like', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
   const user_likedBlogs =async(req,res)=>{
@@ -33,10 +33,10 @@ const like = async (req, res) => {
     }
     // Find all likes where user is the specified userId
     const likedPosts = await Like.find({ user: user }).select('blog');
-    res.json(likedPosts);
+    return res.json(likedPosts);
   } catch (error) {
     // console.error('Error fetching liked posts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -48,10 +48,10 @@ const likeOfblog = async (req, res) => {
     // const totalLikes = await Like.find({ blog: blog }).countDocuments();
     const totalLikes = await Like.countDocuments({ blog });
 
-    res.status(200).json({ totalLikes });
+    return res.status(200).json({ totalLikes });
   } catch (error) {
     console.log('Error fetching total likes:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -64,16 +64,16 @@ const bloglike = async (req, res) => {
     if (existingLike) {
       // User already liked the blog, so unlike it
       await Like.deleteOne({ _id: existingLike._id });
-      res.json({ success: true, message: 'Blog unliked successfully' });
+      return res.json({ success: true, message: 'Blog unliked successfully' });
     } else {
       // User hasn't liked the blog, so like it
       const newLike = new Like({ user, blog });
       await newLike.save();
-      res.json({ success: true, message: 'Blog liked successfully' });
+      return  res.json({ success: true, message: 'Blog liked successfully' });
     }
   } catch (error) {
     console.error('Error doing like', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -86,10 +86,10 @@ const user_likedblog = async (req, res) => {
     // If likedPost exists, user has liked the post, otherwise not liked
     const isLiked = !!likedPost;
     
-    res.json({ isLiked });
+    return res.json({ isLiked });
   } catch (error) {
     console.error('Error checking liked post:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 // const popularBlogs = async (req, res) => {
@@ -147,10 +147,10 @@ const popularBlogs = async (req, res) => {
       // Fetch the blog data using the extracted blog IDs and where permission is true
       const blogs = await blog.find({ _id: { $in: blogIds }, permission: true }).populate('author_id', 'username');
 
-      res.status(200).json(blogs);
+      return  res.status(200).json(blogs);
   } catch (error) {
       console.error('Error fetching popular blogs:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return  res.status(500).json({ error: 'Internal server error' });
   }
 };
 

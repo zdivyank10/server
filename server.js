@@ -31,7 +31,7 @@ const corsOptions = {
   credentials: true
 };
 
-connectDb()
+connectDb();
 
 app.use(cors());
 app.use(express.json());

@@ -3,7 +3,7 @@ const User = require("../models/user-model")
 const blog = require("../models/blog-model")
 const declined = require("../models/declined-model");
 const user = require("../models/user-model");
-const like= require("../models/like-model");
+const like = require("../models/like-model");
 const comment = require("../models/comment-model");
 const contact = require("../models/contact-model");
 // ----------------------------------
@@ -99,10 +99,10 @@ const updateBlogPermission = async (req, res) => {
         // Find the blog document by ID and update the permission field
         const updatedBlog = await blog.findByIdAndUpdate(blogId, { permission }, { new: true });
 
-        res.json(updatedBlog);
+        return res.json(updatedBlog);
     } catch (error) {
         console.error('Error updating blog permission:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
     // console.log('hellp');
 };
@@ -115,10 +115,10 @@ const updateUser = async (req, res) => {
         // Find the user by id and update its properties
         const updatedUser = await User.findByIdAndUpdate(id, { username, email, phone }, { new: true });
 
-        res.json(updatedUser);
+        return res.json(updatedUser);
     } catch (error) {
         console.log('Error updating user:', error);
-        res.status(500).json({ error: 'Error updating user' });
+        return res.status(500).json({ error: 'Error updating user' });
     }
 };
 
@@ -131,7 +131,7 @@ const editorsChoice = async (req, res) => {
         if (!blog_res) {
             return res.status(404).json({ message: 'blog not found' });
         }
-        
+
         // Assuming 'permission' is a field in your blog document
         if (blog_res.permission === "false") {
             return res.status(403).json({ message: 'Permission denied' });
@@ -143,27 +143,27 @@ const editorsChoice = async (req, res) => {
             return res.status(404).json({ message: 'blog not found' });
         }
 
-        res.status(200).json({ message: 'Editor choice successfully added', edtrchoice });
+        return res.status(200).json({ message: 'Editor choice successfully added', edtrchoice });
 
     } catch (error) {
         console.log('Error getting Editors choice blogs', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
 const alreadyeditorsChoice = async (req, res) => {
     try {
-    
-        const alreadyedtrchoice = await blog.find( { choice: "true" }).populate('author_id', 'username');
+
+        const alreadyedtrchoice = await blog.find({ choice: "true" }).populate('author_id', 'username');
         if (!alreadyedtrchoice) {
             return res.status(404).json({ message: 'blog not found' });
         }
 
-        res.status(200).json(alreadyedtrchoice );
+        return res.status(200).json(alreadyedtrchoice);
 
     } catch (error) {
         console.log('Error getting Editors choice blogs', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 const monthlyUser = async (req, res) => {
@@ -187,113 +187,113 @@ const monthlyUser = async (req, res) => {
         ]);
 
         // Send the results back to the client
-        res.status(200).json(results);
+        return res.status(200).json(results);
     } catch (error) {
         console.log('Error getting monthly users:', error);
         // Send an error response to the client
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
-const blogstat = async (req,res)=>{
+const blogstat = async (req, res) => {
     try {
         // Count approved blogs
         const approvedCount = await blog.countDocuments({ permission: 'true' });
-    
+
         // Count pending blogs
         const pendingCount = await blog.countDocuments({ permission: 'pending' });
-    
+
         // Count declined blogs
         const declinedCount = await blog.countDocuments({ permission: 'false' });
-    
+
         // Total number of blogs
         const totalCount = approvedCount + pendingCount + declinedCount;
-    
+
         // Send the blog statistics as JSON response
-        res.status(200).json({
-          approved: approvedCount,
-          pending: pendingCount,
-          declined: declinedCount,
-          total: totalCount
+        return res.status(200).json({
+            approved: approvedCount,
+            pending: pendingCount,
+            declined: declinedCount,
+            total: totalCount
         });
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching blog statistics:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }
-    
-    
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
+
 }
-const totalLike = async (req,res)=>{
+const totalLike = async (req, res) => {
     try {
         // Count approved blogs
         const totLike = await like.countDocuments({});
-    
-       
-        res.status(200).json({
-            TotalLike:totLike
+
+
+        return res.status(200).json({
+            TotalLike: totLike
         });
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching Total Like:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }
-    
-    
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
+
 }
-const totalComment = async (req,res)=>{
+const totalComment = async (req, res) => {
     try {
         // Count approved blogs
         const totcmt = await comment.countDocuments({});
-    
-       
-        res.status(200).json({
-        totalCmt:totcmt
+
+
+        return res.status(200).json({
+            totalCmt: totcmt
         });
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching Total Like:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }  
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 }
-const totalContact = async (req,res)=>{
+const totalContact = async (req, res) => {
     try {
         // Count approved blogs
         const totcontact = await contact.countDocuments({});
-        res.status(200).json(totcontact);
-      } catch (error) {
+        return res.status(200).json(totcontact);
+    } catch (error) {
         console.error('Error fetching Total Like:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }  
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 }
 
-const totalAdmin = async (req,res)=>{
+const totalAdmin = async (req, res) => {
     try {
         // Count approved blogs
-        const totadmin = await user.find({isAdmin:"true"}).countDocuments({});
-        res.status(200).json(totadmin);
-      } catch (error) {
+        const totadmin = await user.find({ isAdmin: "true" }).countDocuments({});
+        return res.status(200).json(totadmin);
+    } catch (error) {
         console.error('Error fetching Total admin:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }  
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 }
-const makeAdmin = async (req,res)=>{
+const makeAdmin = async (req, res) => {
     try {
-        const {userid } =  req.params;
+        const { userid } = req.params;
         // Count approved blogs
-        const admin = await user.findByIdAndUpdate(userid, { isAdmin :true }, { new: true });
-        res.status(200).json(admin);
-      } catch (error) {
+        const admin = await user.findByIdAndUpdate(userid, { isAdmin: true }, { new: true });
+        return res.status(200).json(admin);
+    } catch (error) {
         console.error('Error fetching Total admin:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }  
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 }
-const removeAdmin = async (req,res)=>{
+const removeAdmin = async (req, res) => {
     try {
-        const {userid } =  req.params;
+        const { userid } = req.params;
         // Count approved blogs
-        const admin = await user.findByIdAndUpdate(userid, { isAdmin :false }, { new: true });
-        res.status(200).json(admin);
-      } catch (error) {
+        const admin = await user.findByIdAndUpdate(userid, { isAdmin: false }, { new: true });
+        return res.status(200).json(admin);
+    } catch (error) {
         console.error('Error fetching Total admin:', error);
-        res.status(500).json({ message: 'Internal server error' });
-      }  
+        return res.status(500).json({ message: 'Internal server error' });
+    }
 }
-module.exports = { getAllUsers, getAllContacts, deleteUserById, getUserById, updateBlogPermission,updateUser,editorsChoice,alreadyeditorsChoice,monthlyUser,blogstat,totalLike,totalComment,totalContact ,totalAdmin,makeAdmin,removeAdmin}
+module.exports = { getAllUsers, getAllContacts, deleteUserById, getUserById, updateBlogPermission, updateUser, editorsChoice, alreadyeditorsChoice, monthlyUser, blogstat, totalLike, totalComment, totalContact, totalAdmin, makeAdmin, removeAdmin }

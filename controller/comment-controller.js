@@ -15,7 +15,7 @@ const addcomment = async (req, res) => {
         });
         await newComment.save();
 
-        res.status(201).json({ message: 'Comment added successfully', comment: newComment });
+        return res.status(201).json({ message: 'Comment added successfully', comment: newComment });
 
 
     } catch (error) {
@@ -59,7 +59,7 @@ const deleteComment = async (req, res) => {
         //     return res.status(403).json({ error: "You are not authorized to delete this comment" });
         // }
         await Comment.findOneAndDelete({ _id, userid });
-        res.status(200).json({ message: "Comment deleted successfully" });
+        return res.status(200).json({ message: "Comment deleted successfully" });
     } catch (error) {
         console.log('Error Deleting Comment', error);
     }
@@ -69,7 +69,7 @@ const countComment = async (req, res) => {
     try {
         const { blogid } = req.params;
         const commentCount = await Comment.countDocuments({ blogid: blogid });
-        res.json({ count: commentCount });
+        return res.json({ count: commentCount });
         // res.json({ totalCount });
     } catch (error) {
         console.log('Error fething total Comment', error);
