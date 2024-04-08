@@ -3,16 +3,15 @@ const blog = require('../models/blog-model')
 const blogs = async (req, res) => {
     try {
         const response = await blog.find().populate('author_id', 'username');;
-
         if (!response) {
 
-            res.status(404).json({ message: 'No data Found' })
+           return  res.status(404).json({ message: 'No data Found' })
         }
-        res.status(200).json({ message: response })
+       return  res.status(200).json({ message: response })
 
 
     } catch (error) {
-        res.status(500).json({ message: 'Message Not Displaying Successfully ' })
+       return res.status(500).json({ message: 'Message Not Displaying Successfully ' })
     }
 }
 const blogform = async (req, res) => {
