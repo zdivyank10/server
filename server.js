@@ -12,7 +12,9 @@ const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
 const path = require("path");
 const blog = require('./models/blog-model')
-const multer = require('multer')
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -42,15 +44,51 @@ app.use("/api/admin", adminRouter);
 app.use('/api/like', likeRoutes);
 app.use('/api/comment', commentRoutes);
 
+cloudinary.config({
+  cloud_name: 'do3wjoksd',
+  api_key: '883647493517116',
+  api_secret: 'QaRCtqSkdSa9NdAjDct237CLFj4'
+});
+
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// app.post('/api/blog/upload', upload.single('file'), function (req, res, next) {
+//   return res.json(req.file.filename);
+// })
+// app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next) {
+//   return res.json(req.file.filename);
+// });
+
 app.post('/api/blog/upload', upload.single('file'), function (req, res, next) {
-  return res.json(req.file.filename);
-})
-app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next) {
-  return res.json(req.file.filename);
+  // Upload file to Cloudinary
+  cloudinary.uploader.upload(req.file.path, function(error, result) {
+    if (error) {
+      // Handle error
+      return next(error);
+    }
+    // Delete local file after uploading to Cloudinary
+    fs.unlinkSync(req.file.path);
+    // Return Cloudinary URL of the uploaded file
+    return res.json({ url: result.secure_url });
+  });
 });
+
+app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next) {
+  // Upload file to Cloudinary
+  cloudinary.uploader.upload(req.file.path, function(error, result) {
+    if (error) {
+      // Handle error
+      return next(error);
+    }
+    // Delete local file after uploading to Cloudinary
+    fs.unlinkSync(req.file.path);
+    // Return Cloudinary URL of the uploaded file
+    return res.json({ url: result.secure_url });
+  });
+});
+
 
 app.get('/', async (req, res) => {
   try {
