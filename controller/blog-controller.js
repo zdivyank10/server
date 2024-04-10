@@ -218,7 +218,19 @@ const searchBlog = async (req, res) => {
     }
 }
 
+const blogbyuser = async (req, res) => {
+    try {
+        const { author_id } = req.body;
+
+        const response = await blog.find({author_id: author_id})
+        return res.json(response);
+    } catch (error) {
+        console.log('Error getting blogs By this user', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 
 
-module.exports = { blogs, blogform, approvedBlogs, notApprovedBlogs, pendingBlogs, getfullblog, getblogbyuserid, myapprovedblogs, mynotapprovedblogs, mypendingblogs, updateBlog, deleteBlog, searchBlog }
+
+module.exports = { blogs, blogform, approvedBlogs, notApprovedBlogs, pendingBlogs, getfullblog, getblogbyuserid, myapprovedblogs, mynotapprovedblogs, mypendingblogs, updateBlog, deleteBlog, searchBlog ,blogbyuser}

@@ -1,5 +1,5 @@
 const express = require('express');
-const {blogs,blogform,approvedBlogs,notApprovedBlogs,pendingBlogs,getfullblog, getblogbyuserid, myapprovedblogs, mynotapprovedblogs, mypendingblogs,updateBlog,deleteBlog,searchBlog} = require('../controller/blog-controller');
+const {blogs,blogform,approvedBlogs,notApprovedBlogs,pendingBlogs,getfullblog, getblogbyuserid, myapprovedblogs, mynotapprovedblogs, mypendingblogs,updateBlog,deleteBlog,searchBlog,blogbyuser} = require('../controller/blog-controller');
 
 const authMiddleware = require('../middlewares/auth-middleware');
 // const validate = require('../middlewares/validate-middleware');
@@ -31,6 +31,7 @@ router.route("/:id/delete").delete(deleteBlog);
 
 router.route("/search").post(searchBlog);
 
+router.route("/blogbyuser").post(blogbyuser);
 
 
 module.exports = router;
