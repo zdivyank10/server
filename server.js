@@ -43,7 +43,9 @@ const corsOptions = {
 connectDb();
 
 app.use(cors(corsOptions));
+
 app.use(express.json());
+
 app.use("/api/auth", authRouter);
 app.use("/api/form", contactRouter);
 app.use("/api/blog", blogRouter);

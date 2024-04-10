@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { JWT_KEY } = require("../config")
 
 const userSchema = new mongoose.Schema({
     username : {
@@ -47,7 +48,7 @@ try {
         email: this.email,
         isAdmin : this.isAdmin, 
     },
-    process.env.JWT_KEY,
+    JWT_KEY,
    { expiresIn : "30d"}
     )
 } catch (error) {

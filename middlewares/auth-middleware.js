@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user-model');
+const { JWT_KEY } = require("../config")
 
 const authMiddleware = async (req, res, next) => {
 
@@ -17,7 +18,7 @@ const authMiddleware = async (req, res, next) => {
     console.log(`jwtToken = ${jwtToken}`);
 
     try {
-        const isVerified = jwt.verify(jwtToken, process.env.JWT_KEY);
+        const isVerified = jwt.verify(jwtToken, JWT_KEY);
         console.log(isVerified);
 
         const userData = await User.findOne({ email: isVerified.email }).select({
