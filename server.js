@@ -13,6 +13,15 @@ const errorMiddleware = require("./middlewares/error-middleware");
 const path = require("path");
 const blog = require('./models/blog-model')
 const multer = require('multer')
+const cloudinary = require('cloudinary');
+const { CLOUD_NAME, API_KEY, API_SECRET } = require("./config")
+const fs = require('fs');
+
+cloudinary.config({
+  cloud_name: CLOUD_NAME,
+  api_key: API_KEY,
+  api_secret: API_SECRET
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -45,11 +54,27 @@ app.use('/api/comment', commentRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.post('/api/blog/upload', upload.single('file'), function (req, res, next) {
-  return res.json(req.file.filename);
+app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
+  const profileImageUploadResult = await cloudinary.v2.uploader.upload(
+    req.file.path,
+    {
+      folder: `uploads`,
+      public_id: req.file.filename
+    }
+  );
+  fs.unlinkSync(req.file.path);
+  return res.json(profileImageUploadResult.url);
 })
-app.put('/api/blog/:id/upload', upload.single('file'), function (req, res, next) {
-  return res.json(req.file.filename);
+app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res, next) {
+  const profileImageUploadResult = await cloudinary.v2.uploader.upload(
+    req.file.path,
+    {
+      folder: `uploads`,
+      public_id: req.file.filename
+    }
+  );
+  fs.unlinkSync(req.file.path);
+  return res.json(profileImageUploadResult.url);
 });
 
 app.get('/', async (req, res) => {
@@ -63,7 +88,7 @@ app.get('/api/blog/:blogid', async (req, res) => {
   try {
     const blogid = req.params.blogid;
     const eachblog = await blog.findOne({ _id: blogid });
-    return  res.json({ eachblog });
+    return res.json({ eachblog });
   } catch (error) {
     console.error('Error fetching blog:', error);
     return res.status(500).json({ message: 'Failed to fetch blog' });
