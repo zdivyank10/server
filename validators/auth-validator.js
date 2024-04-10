@@ -1,4 +1,5 @@
 const { z } = require('zod');
+const user = require('../models/user-model'); 
 
 const loginSchema = z.object({
     email: z
@@ -16,21 +17,62 @@ const loginSchema = z.object({
 })
 // create a object Schema
 
+
+
+const isUniqueUsername = async (username) => {
+    try {
+        // Check if there's anyuuser with the provided username
+        const existingUser = await user.findOne({ username });
+        // If no user found with the provided username, return true (username is unique)
+        return !existingUser;
+    } catch (error) {
+        // Handle any potential errors
+        console.error('Error checking username uniqueness:', error);
+        return false; // Return false in case of an error
+    }
+};
+const isUniquenumber = async (phone) => {
+    try {
+        // Check if there's anyuuser with the provided username
+        const existingUser = await user.findOne({ phone });
+        // If no user found with the provided username, return true (username is unique)
+        return !existingUser;
+    } catch (error) {
+        // Handle any potential errors
+        console.error('Error checking Phone Number uniqueness:', error);
+        return false; // Return false in case of an error
+    }
+};
+
 const signupSchema = loginSchema.extend({
+
+    // username: z
+    //     .string({ required_error: "Name is Required" })
+    //     .trim()
+    //     .min(3, { message: "Name must be Upto 3 Letter" })
+    //     .max(255, { message: "Name must not be more than 255 Letter" }),
 
     username: z
         .string({ required_error: "Name is Required" })
         .trim()
         .min(3, { message: "Name must be Upto 3 Letter" })
-        .max(255, { message: "Name must not be more than 255 Letter" }),
-
-
+        .max(255, { message: "Name must not be more than 255 Letter" })
+        .refine(async (username) => {
+            // Use the custom validation function to check uniqueness
+            const isUnique = await isUniqueUsername(username);
+            return isUnique;
+        }, { message: 'Username is already taken' }),
 
     phone: z
         .string({ required_error: "Phone Number is Required" })
         .trim()
         .min(10, { message: "Phone Number must be 10 Digits" })
-        .max(10, { message: "Phone Number must not be more than 10 Digits" }),
+        .max(10, { message: "Phone Number must not be more than 10 Digits" })
+        .refine(async (phone) => {
+            // Use the custom validation function to check uniqueness
+            const isUnique = await isUniquenumber(phone);
+            return isUnique;
+        }, { message: 'Phone Number is already taken' }),
 
 })
 
@@ -72,6 +114,6 @@ const contactSchema = z.object({
     username: z.string().min(3, 'Username must be at least 3 characters long').max(50, 'Username must be less than 50 characters'),
     email: z.string().email('Invalid email format'),
     message: z.string().min(3, 'Message must be at least 3 characters long').max(500, 'Message must be less than 500 characters'),
-  });
+});
 
-module.exports = { signupSchema, loginSchema, passwordschema, updateUserSchema,CommentSchema ,contactSchema};
+module.exports = { signupSchema, loginSchema, passwordschema, updateUserSchema, CommentSchema, contactSchema };

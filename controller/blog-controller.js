@@ -1,4 +1,5 @@
 const blog = require('../models/blog-model')
+const User = require('../models/user-model')
 
 const blogs = async (req, res) => {
     try {
@@ -220,17 +221,27 @@ const searchBlog = async (req, res) => {
 
 const blogbyuser = async (req, res) => {
     try {
-        const { author_id } = req.body;
+      const { username } = req.params;
+  
+      // Step 1: Find the user by their username
+      const author = await User.findOne({ username : username });
+    //   console.log('>>>>>>',author);
 
-        const response = await blog.find({author_id: author_id})
-        return res.json(response);
+      if (!author) {
+        return res.status(404).json({ message: 'Author not found' });
+      }
+  
+      // Step 2: Find blogs where the author_id matches the user's _id
+      const blogs = await blog.find({ 'author_id': author._id , permission: true });
+      console.log('>>>>>>>',blogs);
+      return res.json(blogs);
     } catch (error) {
-        console.log('Error getting blogs By this user', error);
-        return res.status(500).json({ message: 'Internal server error' });
+      console.error('Error fetching blogs by user:', error);
+      return res.status(500).json({ message: 'Internal server error' });
     }
-}
-
-
+  }
+  
+  
 
 
 module.exports = { blogs, blogform, approvedBlogs, notApprovedBlogs, pendingBlogs, getfullblog, getblogbyuserid, myapprovedblogs, mynotapprovedblogs, mypendingblogs, updateBlog, deleteBlog, searchBlog ,blogbyuser}

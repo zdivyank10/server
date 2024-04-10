@@ -31,7 +31,7 @@ router.route("/:id/delete").delete(deleteBlog);
 
 router.route("/search").post(searchBlog);
 
-router.route("/blogbyuser").post(blogbyuser);
+router.route("/:username/blogbyuser").get(blogbyuser);
 
 
 module.exports = router;
