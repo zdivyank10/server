@@ -54,30 +54,42 @@ app.use('/api/like', likeRoutes);
 app.use('/api/comment', commentRoutes);
 
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
-  const profileImageUploadResult = await cloudinary.v2.uploader.upload(
-    req.file.path,
-    {
-      folder: `uploads`,
-      public_id: req.file.filename
-    }
-  );
-  fs.unlinkSync(req.file.path);
-  return res.json(profileImageUploadResult.url);
-})
+  try {
+    
+    
+    const profileImageUploadResult = await cloudinary.v2.uploader.upload(
+      req.file.path,
+      {
+        folder: `uploads`,
+        public_id: req.file.filename
+      }
+    );
+    fs.unlinkSync(req.file.path);
+    return res.json(profileImageUploadResult.url);
+  } catch (error) {
+
+    console.log('Error uploading image',error);
+  }
+  })
 app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res, next) {
-  const profileImageUploadResult = await cloudinary.v2.uploader.upload(
-    req.file.path,
-    {
-      folder: `uploads`,
-      public_id: req.file.filename
-    }
-  );
-  fs.unlinkSync(req.file.path);
-  return res.json(profileImageUploadResult.url);
-});
+  try {
+    
+    const profileImageUploadResult = await cloudinary.v2.uploader.upload(
+      req.file.path,
+      {
+        folder: `uploads`,
+        public_id: req.file.filename
+      }
+    );
+    fs.unlinkSync(req.file.path);
+    return res.json(profileImageUploadResult.url);
+  } catch (error) {
+    console.log('Error updating image',error); 
+  }
+  });
 
 app.get('/', async (req, res) => {
   try {
