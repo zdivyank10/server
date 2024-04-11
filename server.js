@@ -42,7 +42,7 @@ const corsOptions = {
 
 connectDb();
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -54,7 +54,7 @@ app.use('/api/like', likeRoutes);
 app.use('/api/comment', commentRoutes);
 
 
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
   try {
@@ -99,6 +99,7 @@ app.get('/', async (req, res) => {
     console.error('Error fetching blog:', error);
   }
 });
+
 app.get('/api/blog/:blogid', async (req, res) => {
   try {
     const blogid = req.params.blogid;
