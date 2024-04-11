@@ -54,7 +54,7 @@ const upload = multer({ storage: storage })
 
 const corsOptions = {
   // origin: "http://localhost:5173",
-  origin: ["http://localhost:5173", "https://inkgarden.info"],
+  origin: ["http://localhost:5173", 'https://inkgarden.info/'],
   methods: "GET, POST, DELETE, PUT, PATCH, HEAD",
   credentials: true
 };
@@ -73,7 +73,7 @@ app.use('/api/like', likeRoutes);
 app.use('/api/comment', commentRoutes);
 
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
   try {
