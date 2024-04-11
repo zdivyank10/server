@@ -10,12 +10,31 @@ const likeRoutes = require("./router/like-router");
 const commentRoutes = require("./router/comment-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
-const path = require("path");
+// const path = require("path");
 const blog = require('./models/blog-model')
 const multer = require('multer')
 const cloudinary = require('cloudinary');
 const { CLOUD_NAME, API_KEY, API_SECRET } = require("./config")
 const fs = require('fs');
+
+const path = require('path');
+
+fs.mkdirParent = function (dirPath, mode, callback) {
+    //Call the standard fs.mkdir
+    fs.mkdir(dirPath, mode, function (error) {
+        //When it fail in this way, do the custom steps
+        if (error && error.errno === 34) {
+            //Create all the parents recursively
+            fs.mkdirParent(path.dirname(dirPath), mode, callback);
+            //And then the directory
+            fs.mkdirParent(dirPath, mode, callback);
+        }
+        //Manually run the callback since we used our own callback to do all these
+        callback && callback(error);
+       });
+};
+
+fs.mkdirParent(path.resolve(__dirname, "./uploads"));
 
 cloudinary.config({
   cloud_name: CLOUD_NAME,
