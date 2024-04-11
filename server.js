@@ -70,8 +70,8 @@ app.post('/api/blog/upload', upload.single('file'), async function (req, res, ne
     fs.unlinkSync(req.file.path);
     return res.json(profileImageUploadResult.url);
   } catch (error) {
-
     console.log('Error uploading image',error);
+    return res.status(500).json({ error: 'Failed to upload image' });
   }
   })
 app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res, next) {
@@ -88,6 +88,7 @@ app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res,
     return res.json(profileImageUploadResult.url);
   } catch (error) {
     console.log('Error updating image',error); 
+    return res.status(500).json({ error: 'Failed to upload image' });
   }
   });
 
