@@ -16,24 +16,26 @@ const multer = require('multer')
 const cloudinary = require('cloudinary');
 const { CLOUD_NAME, API_KEY, API_SECRET } = require("./config")
 const fs = require('fs');
+let streamifier = require('streamifier');
 
+connectDb();
 
-fs.mkdirParent = function (dirPath, mode, callback) {
-  //Call the standard fs.mkdir
-  fs.mkdir(dirPath, mode, function (error) {
-    //When it fail in this way, do the custom steps
-    if (error && error.errno === 34) {
-      //Create all the parents recursively
-      fs.mkdirParent(path.dirname(dirPath), mode, callback);
-      //And then the directory
-      fs.mkdirParent(dirPath, mode, callback);
-    }
-    //Manually run the callback since we used our own callback to do all these
-    callback && callback(error);
-  });
-};
+// fs.mkdirParent = function (dirPath, mode, callback) {
+//   //Call the standard fs.mkdir
+//   fs.mkdir(dirPath, mode, function (error) {
+//     //When it fail in this way, do the custom steps
+//     if (error && error.errno === 34) {
+//       //Create all the parents recursively
+//       fs.mkdirParent(path.dirname(dirPath), mode, callback);
+//       //And then the directory
+//       fs.mkdirParent(dirPath, mode, callback);
+//     }
+//     //Manually run the callback since we used our own callback to do all these
+//     callback && callback(error);
+//   });
+// };
 
-fs.mkdirParent(path.resolve(__dirname, "./uploads"));
+// fs.mkdirParent(path.join(__dirname, 'uploads'));
 
 cloudinary.config({
   cloud_name: CLOUD_NAME,
@@ -41,14 +43,21 @@ cloudinary.config({
   api_secret: API_SECRET
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads')
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, path.join(__dirname, 'uploads'))
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname)
+//   }
+// })
+
+const storage = multer.memoryStorage({
+  destination: function(req, file, callback) {
+   callback(null, "");
   },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  }
-})
+ })
+
 const upload = multer({ storage: storage })
 
 const corsOptions = {
@@ -57,8 +66,6 @@ const corsOptions = {
   methods: "GET, POST, DELETE, PUT, PATCH, HEAD",
   credentials: true
 };
-
-connectDb();
 
 app.use(cors(corsOptions));
 
@@ -76,15 +83,23 @@ app.use('/api/comment', commentRoutes);
 
 app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
   try {
-    const profileImageUploadResult = await cloudinary.v2.uploader.upload(
-      req.file.path,
+    console.log("1-post",req.file);
+    const profileImageUploadResult =  cloudinary.v2.uploader.upload_stream(
       {
         folder: `uploads`,
         public_id: req.file.filename
-      }
+      },function(error, result) {
+        console.log(error, result);
+        return res.json(result.url);
+    }
     );
-    fs.unlinkSync(req.file.path);
-    return res.json(profileImageUploadResult.url);
+    // fs.createReadStream(req.file.buffer).pipe(profileImageUploadResult)
+    streamifier.createReadStream(req.file.buffer).pipe(profileImageUploadResult);
+    // console.log("2-post",profileImageUploadResult);
+    // fs.unlinkSync(req.file.path);
+    // console.log("3-post");
+    // return res.json(profileImageUploadResult.url);
+    // return res.end()
   } catch (error) {
     console.log('Error uploading image', error);
     return res.status(500).json({ error: 'Failed to upload image' });
