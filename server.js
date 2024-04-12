@@ -10,28 +10,27 @@ const likeRoutes = require("./router/like-router");
 const commentRoutes = require("./router/comment-router");
 const connectDb = require("./utils/db");
 const errorMiddleware = require("./middlewares/error-middleware");
-// const path = require("path");
+const path = require("path");
 const blog = require('./models/blog-model')
 const multer = require('multer')
 const cloudinary = require('cloudinary');
 const { CLOUD_NAME, API_KEY, API_SECRET } = require("./config")
 const fs = require('fs');
 
-const path = require('path');
 
 fs.mkdirParent = function (dirPath, mode, callback) {
-    //Call the standard fs.mkdir
-    fs.mkdir(dirPath, mode, function (error) {
-        //When it fail in this way, do the custom steps
-        if (error && error.errno === 34) {
-            //Create all the parents recursively
-            fs.mkdirParent(path.dirname(dirPath), mode, callback);
-            //And then the directory
-            fs.mkdirParent(dirPath, mode, callback);
-        }
-        //Manually run the callback since we used our own callback to do all these
-        callback && callback(error);
-       });
+  //Call the standard fs.mkdir
+  fs.mkdir(dirPath, mode, function (error) {
+    //When it fail in this way, do the custom steps
+    if (error && error.errno === 34) {
+      //Create all the parents recursively
+      fs.mkdirParent(path.dirname(dirPath), mode, callback);
+      //And then the directory
+      fs.mkdirParent(dirPath, mode, callback);
+    }
+    //Manually run the callback since we used our own callback to do all these
+    callback && callback(error);
+  });
 };
 
 fs.mkdirParent(path.resolve(__dirname, "./uploads"));
@@ -77,8 +76,6 @@ app.use('/api/comment', commentRoutes);
 
 app.post('/api/blog/upload', upload.single('file'), async function (req, res, next) {
   try {
-    
-    
     const profileImageUploadResult = await cloudinary.v2.uploader.upload(
       req.file.path,
       {
@@ -89,13 +86,12 @@ app.post('/api/blog/upload', upload.single('file'), async function (req, res, ne
     fs.unlinkSync(req.file.path);
     return res.json(profileImageUploadResult.url);
   } catch (error) {
-    console.log('Error uploading image',error);
+    console.log('Error uploading image', error);
     return res.status(500).json({ error: 'Failed to upload image' });
   }
-  })
+})
 app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res, next) {
   try {
-    
     const profileImageUploadResult = await cloudinary.v2.uploader.upload(
       req.file.path,
       {
@@ -106,10 +102,10 @@ app.put('/api/blog/:id/upload', upload.single('file'), async function (req, res,
     fs.unlinkSync(req.file.path);
     return res.json(profileImageUploadResult.url);
   } catch (error) {
-    console.log('Error updating image',error); 
+    console.log('Error updating image', error);
     return res.status(500).json({ error: 'Failed to upload image' });
   }
-  });
+});
 
 app.get('/', async (req, res) => {
   try {
